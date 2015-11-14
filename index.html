@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<style type="text/css">
+	html,body {
+		font-family: Helvetica, sans-serif;
+		font-size: 10.5pt;
+	}
+	
+	table{
+		margin-bottom: 5px;
+	}
+	thead tr {
+		background-color: #CFCFCF;
+	}
+	
+	th {
+		padding: 5px;
+	}
+	
+	#wichtelOutputTable tbody tr:nth-child(odd) {
+		background-color: white;
+	}
+	
+	#wichtelOutputTable tbody tr:nth-child(even) {
+		background-color: #EEEEEE;
+	}
+	
+	</style>
+	<script type="text/javascript" src="jquery-1.6.2.min.js"></script>
+	<script type="text/javascript">
+	var results = [];
+	
+	
+	$(document).ready(function(){
+		loadDataFromLocalStorage();
+	});
+	
+	function addRow(rowData) {
+		rowData = rowData || {name: '',group:''};
+		
+		var row = $('<tr></tr>');
+				var nameField = $('<td><input type="text" class="name" value="'+(rowData.name)+'"/></td>');
+				var groupField = $('<td><input type="text" size="3" class="group" value="'+(rowData.group)+'"/></td>');
+				var plusBtn = $('<button onclick="addRow();">+</button>');
+				var minusBtn = null;
+				if ($('#wichtelInputTable tbody').children().length > 0) {
+					minusBtn = $('<button>-</button>').bind('click', function() {
+							$(this).parent().parent().remove();	
+					});
+				}
+				
+				
+				var btnField = $('<td></td>').append(plusBtn).append(' ').append(minusBtn);
+				
+				row.append(nameField);
+				row.append(groupField);
+				row.append(btnField);
+				
+				$('#wichtelInputTable tbody').append(row);
+				nameField.find('input')[0].focus();
+	}
+	
+	function getInputData() {
+		var data = [];
+		$('#wichtelInputTable tbody tr').each(function(i) {
+				if ($(this).find('input.name').val() != undefined) {
+					data.push({
+							name: $(this).find('input.name').val(),
+							group: $(this).find('input.group').val()
+					});
+				}
+		});
+		return data;
+	}
+	
+	function doShuffle() {
+		var data = getInputData();
+		
+		
+		$.ajax({
+				url: 'backend.php',
+				type: 'POST',
+				data: {
+					fcall: 'doShuffle',
+					wichtel: data
+				},
+				success: function(ret) {
+					
+					if (ret.success == true) {
+						fillResults(ret.result.wichtel);
+						results = ret.result.wichtel;
+						storeDataToLocalStorage();
+					} else {
+						alert('Oops! Etwas ging schief: '+ret.msg);
+					}
+				}
+		});
+	}
+	
+	function fillResults(res) {
+		var tbody = $('#wichtelOutputTable tbody');
+		tbody.html('');
+		for (var i = 0; i < res.length; i++) {
+			var w = res[i];
+			var row = $('<tr></tr>');
+			var nameCell = $('<td>'+(w.name)+'</td>');
+			var wichtelOfCell = $('<td>'+(w.wichtelOf)+'</td>');
+			var wichtelCell = $('<td>'+(w.wichtel)+'</td>');
+			
+			row.append(nameCell);
+			row.append(wichtelOfCell);
+			row.append(wichtelCell);
+			tbody.append(row);
+		}
+	}
+	
+	
+	function storeDataToLocalStorage() {
+		if (typeof localStorage == 'object' && typeof JSON == 'object') {
+			localStorage.setItem('wichtelInput',JSON.stringify(getInputData()));
+			localStorage.setItem('results',JSON.stringify(results));
+		}
+	}
+	
+	function loadDataFromLocalStorage() {
+		if (typeof localStorage == 'object' && typeof JSON == 'object') {
+			var input = JSON.parse(localStorage.getItem('wichtelInput'));
+			var res = JSON.parse(localStorage.getItem('results'));
+			if (input != null) {
+				for (var i = 0; i < input.length; i++) {
+					addRow(input[i]);
+				}
+			} else {
+				addRow();
+			}
+			
+			
+			if (res != null) {
+				results = res;
+				fillResults(res);
+			}
+		} else {
+			addRow();
+		}
+	}
+	
+	function clr() {
+		$('#wichtelInputTable tbody').html('');
+		$('#wichtelOutputTable tbody').html('');
+		results = [];
+		addRow();
+		if (typeof localStorage == 'object') {
+			localStorage.wichtelInput = null;
+			localStorage.results = null;
+		}
+	}
+	</script>
+</head>
+
+<body>
+<h1>Wichtel-o-mat</h1>
+<h2>Die Wichtel-Shuffle-Seite</h2>
+<div>
+<h3>Definiere Deine Wichtel</h3>
+<table id="wichtelInputTable">
+	<thead>
+	<tr><th>Name</th><th>Gruppe</th><td>&nbsp;</td></tr>
+	</thead>
+	<tbody>
+	</tbody>
+</table>
+<button onclick="doShuffle();">Würfle Wichtel!</button>
+<button onclick="clr();">alles leeren</button>
+</div>
+
+<div>
+<h3>Wichtel-Liste - Wüfel-Resultat</h3>
+<table id="wichtelOutputTable">
+	<thead>
+		<tr><th>Name</th><th>ist Wichtel von</th><th>hat Wichtel</th></tr>
+	</thead>
+	
+	<tbody>
+	
+	</tbody>
+</table>
+</div>
+
+</body>
+</html>
