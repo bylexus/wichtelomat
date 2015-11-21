@@ -1,5 +1,6 @@
 let React = require('react'),
-	ReactDOM = require('react-dom');
+	ReactDOM = require('react-dom'),
+	$ = require('jquery');
 
 class Store {
 	constructor() {
@@ -10,16 +11,8 @@ class Store {
 	loadFromStorage() {
 		let input = JSON.parse(localStorage.getItem('wichtelInput'));
 		let res = JSON.parse(localStorage.getItem('results'));
-		this.data.personen = [];
-		this.data.result = [];
-
-		if (input) {
-			input.forEach((item) => this.data.personen.push(item));
-		}
-		
-		if (res) {
-			this.data.result = res;
-		}
+		this.data.personen = input || [];
+		this.data.result = res || [];
 	}
 
 	storePersonen(personen) {
@@ -32,6 +25,10 @@ class Store {
 
 	personen() {
 		return this.data.personen || [];
+	}
+
+	resultate() {
+		return this.data.result || [];
 	}
 }
 
@@ -109,6 +106,8 @@ let WichtelBox = React.createClass({
 					</tbody>
 				</table>
 				<button type="button" onClick={this.addRow}>+</button>
+				<button type="button" onClick={this.emitShuffle}>Würfeln!</button>
+				<button type="button" onClick={this.reset}>Alles leeren</button>
 			</div>
 		);
 	},
@@ -149,32 +148,95 @@ let WichtelBox = React.createClass({
 
 	focusLast() {
 		if (this.lastRow) this.lastRow.setFocus();	
+	},
+
+	emitShuffle() {
+		if (this.props.onShuffle instanceof Function) {
+			this.props.onShuffle(this.state.personen);
+		}
+	},
+
+	reset() {
+		this.setState({personen: [{name: '',gruppe: ''}]});
+		store.storePersonen([]);
+		if (this.props.onReset instanceof Function) {
+			this.props.onReset();
+		}
 	}
 });
 
 let WichtelResult = React.createClass({
+	getDefaultProps() {
+	    return {
+	        data: []
+	    };
+	},
 	render() {
+		let data = this.props.data.map((item,index) => (
+			<tr key={index}>
+				<td>{item.name}</td><td>{item.wichtelOf}</td><td>{item.wichtel}</td>
+			</tr>
+		));
 		return (
 			<div className="wichtelresult">
 				<table>
 					<thead>
 					<tr><th>Name</th><th>ist Wichtel von</th><th>hat Wichtel</th></tr>
 					</thead>
+					<tbody>{data}</tbody>
 				</table>
 			</div>
 		);
 	}
 });
 
-ReactDOM.render(
-	<div>
-		<h1 className="title">Wichtel-o-mat</h1>
-		<h2>Deine Wichtel</h2>
-		<WichtelBox />
+let App = React.createClass({
+	getInitialState() {
+	    return {
+	        result: store.resultate()  
+	    };
+	},
 
-		<h2>Resultat</h2>
-		<WichtelResult />
-	</div>,
-	
+	onShuffle(personen) {
+		$.ajax({
+			url: 'backend.php',
+			type: 'POST',
+			data: {
+				fcall: 'doShuffle',
+				wichtel: personen
+			},
+			success: function(ret) {
+				
+				if (ret.success) {
+					this.setState({result: ret.result.wichtel});
+					store.storeResults(ret.result.wichtel);
+				} else {
+					alert('Oops! Etwas ging schief: '+ret.msg);
+				}
+			}.bind(this)
+		});
+	},
+
+	reset() {
+		this.setState({result: []});
+		store.storeResults([]);
+	},
+
+	render() {
+		return (
+			<div>
+				<h1 className="title">Wichtel-o-mat</h1>
+				<h2>Deine Wichtel</h2>
+				<WichtelBox onShuffle={this.onShuffle} onReset={this.reset}/>
+
+				<h2>Resultat</h2>
+				<WichtelResult data={this.state.result} />
+			</div>
+		);
+	}
+});
+
+ReactDOM.render(
+	<App />,
 	document.getElementById('content')
 );
