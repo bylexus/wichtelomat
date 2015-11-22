@@ -49,7 +49,7 @@ const App = React.createClass({
 
 	render() {
 		return (
-			<div>
+			<div style={{maxWidth: '800px'}}>
 				<AppBar 
 					title="Wichtel-o-Mat"
 					showMenuIconButton={false}
