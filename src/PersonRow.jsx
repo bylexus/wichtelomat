@@ -1,21 +1,26 @@
-let React = require('react'),
-	ReactDOM = require('react-dom');
+const React = require('react'),
+	ReactDOM = require('react-dom'),
+	FontIcon = require('material-ui/lib/font-icon'),
+	IconButton = require('material-ui/lib/icon-button'),
+	TextField = require('material-ui/lib/text-field');
 
 module.exports = React.createClass({
 	displayName: 'PersonRow',
 	render() {
 		return (
 			<tr>
-				<td><input type="text" 
+				<td><TextField
 					autoFocus
-					name="name" 
+					hintText="Wichtel-Name"
 					defaultValue={this.props.name} 
 					onBlur={this.dataChange.bind(this,'name')} 
 					onKeyPress={this.props.onKeyPress}
 					ref={(c) => this.focusField = c}
 				/></td>
-				<td><input type="text" name="gruppe" defaultValue={this.props.gruppe} onChange={this.dataChange.bind(this,'gruppe')} onKeyPress={this.props.onKeyPress}/></td>
-				<td><button type="button" onClick={this.props.onDelete}>-</button></td>
+				<td><TextField defaultValue={this.props.gruppe} onChange={this.dataChange.bind(this,'gruppe')} onKeyPress={this.props.onKeyPress} style={{width: '80px'}}/></td>
+				<td>
+					<IconButton iconClassName="material-icons" onClick={this.props.onDelete}>remove_circle_outline</IconButton>
+				</td>
 			</tr>
 		);
 	},

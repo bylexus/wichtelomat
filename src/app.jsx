@@ -1,13 +1,23 @@
-let React = require('react'),
+const React = require('react'),
 	ReactDOM = require('react-dom'),
 	$ = require('jquery'),
 
 	store = require('./Store').store,
 	WichtelBox = require('./WichtelBox'),
-	WichtelResult = require('./WichtelResult');
+	WichtelResult = require('./WichtelResult'),
+
+	AppBar = require('material-ui/lib/app-bar'),
+	FlatButton = require('material-ui/lib/flat-button');
+
+//Needed for onTouchTap
+//Can go away when react 1.0 release
+//Check this repo:
+//https://github.com/zilverline/react-tap-event-plugin
+const injectTapEventPlugin = require("react-tap-event-plugin");
+injectTapEventPlugin();
 
 
-let App = React.createClass({
+const App = React.createClass({
 	getInitialState() {
 	    return {
 	        result: store.resultate()  
@@ -40,10 +50,17 @@ let App = React.createClass({
 	render() {
 		return (
 			<div>
-				<h2>Deine Wichtel</h2>
+				<AppBar 
+					title="Wichtel-o-Mat"
+					showMenuIconButton={false}
+					iconElementRight={
+						<FlatButton 
+							label="&copy; 2015 alexi.ch"
+							linkButton={true}
+							href="https://alexi.ch/"
+						/>
+					}/>
 				<WichtelBox onShuffle={this.onShuffle} onReset={this.reset}/>
-
-				<h2>Resultat</h2>
 				<WichtelResult data={this.state.result} />
 			</div>
 		);

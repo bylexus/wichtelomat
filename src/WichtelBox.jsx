@@ -1,7 +1,15 @@
-let React = require('react'),
+const React = require('react'),
 	ReactDOM = require('react-dom'),
 	PersonRow = require('./PersonRow'),
 	store = require('./Store').store;
+
+const Card = require('material-ui/lib/card/card');
+const CardActions = require('material-ui/lib/card/card-actions');
+const CardText = require('material-ui/lib/card/card-text');
+const CardTitle = require('material-ui/lib/card/card-title');
+const FontIcon = require('material-ui/lib/font-icon');
+const RaisedButton = require('material-ui/lib/raised-button');
+
 
 module.exports = React.createClass({
 	displayName: 'WichtelBox',
@@ -10,7 +18,8 @@ module.exports = React.createClass({
 	    return {
 	        personen: store.personen().length > 0? store.personen() : [{
 	        	name: 'Alex',
-	        	gruppe: '1'
+	        	gruppe: '1',
+	        	id: new Date().getTime() + Math.round(Math.random()*1000)
 	        }]  
 	    };
 	},
@@ -21,7 +30,7 @@ module.exports = React.createClass({
 			this.lastRow = null;
 			return (
 				<PersonRow 
-					key={index} 
+					key={person.id} 
 					name={person.name} 
 					gruppe={person.gruppe} 
 					onChange={this.onPersonChange.bind(this,index)} 
@@ -36,7 +45,9 @@ module.exports = React.createClass({
 			);
 		});
 		return (
-			<div className="wichtelbox">
+			<Card>
+				<CardTitle title="Deine Wichtel" subtitle="trage hier alle deine Wichtel ein"/>
+				<CardText>
 				<table>
 					<thead>
 					<tr><th>Name</th><th>Gruppe</th><th>&nbsp;</th></tr>
@@ -45,10 +56,16 @@ module.exports = React.createClass({
 						{rows}
 					</tbody>
 				</table>
-				<button type="button" onClick={this.addRow}>+</button>
-				<button type="button" onClick={this.emitShuffle}>Würfeln!</button>
-				<button type="button" onClick={this.reset}>Alles leeren</button>
-			</div>
+				<CardActions>
+					<RaisedButton secondary={true} iconClassName="material-icons" label="neuer Wichtel" onClick={this.addRow}>
+						<FontIcon className="material-icons" style={{color: 'white'}}>add_circle_outline</FontIcon>
+					</RaisedButton>
+					<RaisedButton label="Würfeln!" secondary={true} onClick={this.emitShuffle} />
+					<RaisedButton label="Alles leeren" onClick={this.reset} />
+				</CardActions>
+				</CardText>
+				
+			</Card>
 		);
 	},
 
@@ -80,7 +97,11 @@ module.exports = React.createClass({
 
 	addRow() {
 		let ps = this.state.personen;
-		let p = {name: '',gruppe: this.state.personen[this.state.personen.length-1].gruppe};
+		let p = {
+			name: '',
+			gruppe: this.state.personen.length > 0?this.state.personen[this.state.personen.length-1].gruppe:'',
+			id: new Date().getTime()+Math.round(Math.random()*1000)
+		};
 		ps.push(p);
 		this.setState({personen: ps},this.focusLast);
 		this.focusLast();
@@ -97,8 +118,9 @@ module.exports = React.createClass({
 	},
 
 	reset() {
-		this.setState({personen: [{name: '',gruppe: ''}]});
+		this.setState({personen: []}, this.addRow);
 		store.storePersonen([]);
+
 		if (this.props.onReset instanceof Function) {
 			this.props.onReset();
 		}
