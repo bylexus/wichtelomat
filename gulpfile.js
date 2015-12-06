@@ -6,6 +6,7 @@ var buffer = require('vinyl-buffer');
 var notify = require('gulp-notify');
 var uglify = require('gulp-uglify');
 var htmlreplace = require('gulp-html-replace');
+var del = require('del');
 
 
 function errorHandler(err) {
@@ -41,10 +42,16 @@ gulp.task('build:prod', function () {
   .pipe(gulp.dest('build'));
 });
 
-gulp.task('export', ['build:prod'],function(){
+gulp.task('clean:export', function(){
+  return del(['./export/**/*']);
+});
+
+gulp.task('export', ['clean:export','build:prod'],function(){
+  // Copy dist files to export
   gulp.src(['*.php','build/app-release.js'])
   .pipe(gulp.dest('./export/'));
 
+  // copy index.html, by inserting the prod app js file
   gulp.src('index.html')
   .pipe(htmlreplace({
     'js': 'app-release.js'
