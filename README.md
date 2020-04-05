@@ -1,20 +1,24 @@
-Wichtel-o-mat
-==============
+# wichtelomat
 
-This small "secret santa" application is mainly developed by me to learn some ReactJS, EcmaScript 6 and gulp as build system.
+## Project setup
+```
+npm install
+```
 
-[Try it online](https://alexi.ch/wichtelomat/)
+### Compiles and hot-reloads for development
+```
+npm run serve
+```
 
-Build
-------
+### Compiles and minifies for production
+```
+npm run build
+```
 
-* npm install
-* gulp build / gulp watch
+### Lints and fixes files
+```
+npm run lint
+```
 
-Release
--------
-
-* npm install
-* npm export //--> exports a build version to export/
-
-(c) 2015 Alexander Schenkel
+### Customize configuration
+See [Configuration Reference](https://cli.vuejs.org/config/).
