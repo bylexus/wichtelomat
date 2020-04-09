@@ -1,5 +1,12 @@
 # wichtelomat
 
+> Manage your Christmas Elves!
+
+This is a small project helping me keep track / find our Family Christmas Eleves.
+
+Developed in pure frontend JavaScript using [VueJS](https://vuejs.org/).
+
+
 ## Project setup
 ```
 npm install
@@ -10,15 +17,18 @@ npm install
 npm run serve
 ```
 
+### Compiling for dev:
+```
+npm run build-dev
+```
+
+### Watching for dev:
+```
+npm run watch
+```
+
 ### Compiles and minifies for production
 ```
-npm run build
+npm run build # output to dist/ folder
 ```
 
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).

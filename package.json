@@ -1,6 +1,6 @@
 {
     "name": "wichtelomat",
-    "version": "1.0.0",
+    "version": "2.1.0",
     "private": true,
     "description": "Wichtel-o-mat helps you with your Santa presents",
     "author": {
@@ -9,6 +9,7 @@
     "scripts": {
         "serve": "vue-cli-service serve",
         "build": "vue-cli-service build",
+        "build-dev": "vue-cli-service build --mode=development",
         "watch": "vue-cli-service build --mode=development --watch",
         "lint": "vue-cli-service lint",
         "test": "npm test"

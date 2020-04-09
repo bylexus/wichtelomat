@@ -77,7 +77,7 @@ export function saveState(state) {
 }
 
 export function loadState() {
-    return JSON.parse(localStorage.getItem("wichtelomat.state") || {});
+    return JSON.parse(localStorage.getItem("wichtelomat.state")) || {};
 }
 
 export function findWichtelByIndex(index, wichtels) {
