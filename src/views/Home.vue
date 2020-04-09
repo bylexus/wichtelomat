@@ -73,23 +73,26 @@
                         Wichtel löschen
                     </v-btn>
                     <v-spacer />
-                        <v-tooltip bottom>
-                            <template v-slot:activator="{ on }">
-                                <v-btn v-on="on" class="mr-2" @click="onUpload">
-                                    <v-icon>fas fa-upload</v-icon>
-                                </v-btn>
+                        <v-menu offset-y>
+                            <template v-slot:activator="{on}">
+                                <v-btn v-on="on" fab color="primary"><v-icon>fas fa-cogs</v-icon></v-btn>
                             </template>
-                            <span>Einstellungen laden</span>
-                            <input type="file" ref="loadinput" style="display:none" @change="onUploadFileChoose"/>
-                        </v-tooltip>
-                        <v-tooltip bottom>
-                            <template v-slot:activator="{ on }">
-                                <v-btn v-on="on" @click="onDownload">
-                                    <v-icon>fas fa-download</v-icon>
-                                </v-btn>
-                            </template>
-                            <span>Einstellungen speichern (download)</span>
-                        </v-tooltip>
+                            <v-list>
+                                <v-list-item @click="onDownload">
+                                    <v-list-item-icon><v-icon>fas fa-download</v-icon></v-list-item-icon>
+                                    <v-list-item-content>speichern (download)</v-list-item-content>
+                                </v-list-item>
+                                <v-list-item @click="onUpload">
+                                    <v-list-item-icon><v-icon>fas fa-upload</v-icon></v-list-item-icon>
+                                    <v-list-item-content>laden</v-list-item-content>
+                                    <input type="file" ref="loadinput" style="display:none" @change="onUploadFileChoose"/>
+                                </v-list-item>
+                                <v-list-item @click="onReset">
+                                    <v-list-item-icon><v-icon>fas fa-trash</v-icon></v-list-item-icon>
+                                    <v-list-item-content>alles leeren</v-list-item-content>
+                                </v-list-item>
+                            </v-list>
+                        </v-menu>
                 </v-card-actions>
                 <v-card-text v-if="error">
                     <v-alert type="error">{{ error }}</v-alert>
@@ -341,6 +344,11 @@ export default {
                 };
                 reader.readAsText(file)
             }
+        },
+
+        onReset() {
+            this.loadState({});
+            this.saveState();
         }
     }
 };
