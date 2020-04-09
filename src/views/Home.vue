@@ -1,6 +1,6 @@
 <template>
     <v-container>
-        <v-card>
+        <v-card elevation="6">
             <v-card-title>
                 <v-avatar> <v-icon color="black">fas fa-gifts</v-icon> </v-avatar>Anlass
             </v-card-title>
@@ -8,95 +8,95 @@
                 <v-text-field v-model.lazy="anlass" placeholder="z.B. Weihnachten mit Familie" autofocus />
             </v-card-text>
             <v-divider />
-                <v-card-title>
-                    <v-avatar>
-                        <v-icon color="black">fas fa-hat-wizard</v-icon>
-                    </v-avatar>
-                    Wichtel
-                </v-card-title>
+            <v-card-title>
+                <v-avatar>
+                    <v-icon color="black">fas fa-hat-wizard</v-icon>
+                </v-avatar>
+                Wichtel
+            </v-card-title>
 
-                <v-card-text>
-                    <v-container fluid>
-                        <template v-for="(w, index) in wichtel">
-                            <v-row align="center" :key="`row-${w.index}`">
-                                <v-col cols="12" sm="6">
-                                    <v-text-field
-                                        v-model.lazy="w.name"
-                                        @keydown.enter="onAdd"
-                                        @change="onChange"
-                                        :autofocus="index > 0"
-                                        label="Name"
-                                        placeholder="z.B. Mami"
-                                        />
-                                </v-col>
-                                <v-col cols="12" sm="4">
-                                    <v-text-field
-                                        v-model.lazy="w.gruppe"
-                                        @keydown.enter="onAdd"
-                                        label="Gruppe"
-                                        placeholder="z.B. Eltern"
-                                        />
-                                </v-col>
-                                <v-col cols="12" sm="2">
-                                    <v-btn
-                                        class="mr-2"
-                                        v-if="index + 1 === wichtel.length"
-                                        @click.stop="onAdd"
-                                        small
-                                        fab
-                                        color="primary"
-                                        >
-                                        <v-icon small>fas fa-plus /></v-icon>
-                                    </v-btn>
-                                    <v-btn
-                                        v-if="wichtel.length > 1"
-                                        @click.stop="onRemove(w.index)"
-                                        small
-                                        fab
-                                        color="error"
-                                        >
-                                        <v-icon small>fas fa-minus /></v-icon>
-                                    </v-btn>
-                                </v-col>
-                            </v-row>
-                            <v-divider v-if="index + 1 < wichtel.length" :key="`div-${w.index}`" />
-                        </template>
-                    </v-container>
-                </v-card-text>
-                <v-card-actions>
-                    <v-btn color="primary" @click.stop="dice" :loading="loading">
-                        <v-icon left>fas fa-dice</v-icon>
-                        Wichtel würfeln!
-                    </v-btn>
-                    <v-btn color="red lighten-2 white--text" @click.stop="clear" :loading="loading">
-                        <v-icon left>fas fa-trash</v-icon>
-                        Wichtel löschen
-                    </v-btn>
-                    <v-spacer />
-                        <v-menu offset-y>
-                            <template v-slot:activator="{on}">
-                                <v-btn v-on="on" fab color="primary"><v-icon>fas fa-cogs</v-icon></v-btn>
-                            </template>
-                            <v-list>
-                                <v-list-item @click="onDownload">
-                                    <v-list-item-icon><v-icon>fas fa-download</v-icon></v-list-item-icon>
-                                    <v-list-item-content>speichern (download)</v-list-item-content>
-                                </v-list-item>
-                                <v-list-item @click="onUpload">
-                                    <v-list-item-icon><v-icon>fas fa-upload</v-icon></v-list-item-icon>
-                                    <v-list-item-content>laden</v-list-item-content>
-                                    <input type="file" ref="loadinput" style="display:none" @change="onUploadFileChoose"/>
-                                </v-list-item>
-                                <v-list-item @click="onReset">
-                                    <v-list-item-icon><v-icon>fas fa-trash</v-icon></v-list-item-icon>
-                                    <v-list-item-content>alles leeren</v-list-item-content>
-                                </v-list-item>
-                            </v-list>
-                        </v-menu>
-                </v-card-actions>
-                <v-card-text v-if="error">
-                    <v-alert type="error">{{ error }}</v-alert>
-                </v-card-text>
+            <v-card-text>
+                <v-container fluid>
+                    <template v-for="(w, index) in wichtel">
+                        <v-row align="center" :key="`row-${w.index}`">
+                            <v-col cols="12" sm="6">
+                                <v-text-field
+                                    v-model.lazy="w.name"
+                                    @keydown.enter="onAdd"
+                                    @change="onChange"
+                                    :autofocus="index > 0"
+                                    label="Name"
+                                    placeholder="z.B. Mami"
+                                />
+                            </v-col>
+                            <v-col cols="12" sm="4">
+                                <v-text-field
+                                    v-model.lazy="w.gruppe"
+                                    @keydown.enter="onAdd"
+                                    label="Gruppe"
+                                    placeholder="z.B. Eltern"
+                                />
+                            </v-col>
+                            <v-col cols="12" sm="2">
+                                <v-btn
+                                    class="mr-2"
+                                    v-if="index + 1 === wichtel.length"
+                                    @click.stop="onAdd"
+                                    small
+                                    fab
+                                    color="primary"
+                                >
+                                    <v-icon small>fas fa-plus /></v-icon>
+                                </v-btn>
+                                <v-btn
+                                    v-if="wichtel.length > 1"
+                                    @click.stop="onRemove(w.index)"
+                                    small
+                                    fab
+                                    color="error"
+                                >
+                                    <v-icon small>fas fa-minus /></v-icon>
+                                </v-btn>
+                            </v-col>
+                        </v-row>
+                        <v-divider v-if="index + 1 < wichtel.length" :key="`div-${w.index}`" />
+                    </template>
+                </v-container>
+            </v-card-text>
+            <v-card-actions>
+                <v-btn color="primary" @click.stop="dice" :loading="loading">
+                    <v-icon left>fas fa-dice</v-icon>
+                    Wichtel würfeln!
+                </v-btn>
+                <v-btn color="red lighten-2 white--text" @click.stop="clear" :loading="loading">
+                    <v-icon left>fas fa-trash</v-icon>
+                    Wichtel löschen
+                </v-btn>
+                <v-spacer />
+                <v-menu offset-y>
+                    <template v-slot:activator="{ on }">
+                        <v-btn v-on="on" fab color="primary"><v-icon>fas fa-cogs</v-icon></v-btn>
+                    </template>
+                    <v-list>
+                        <v-list-item @click="onDownload">
+                            <v-list-item-icon><v-icon>fas fa-download</v-icon></v-list-item-icon>
+                            <v-list-item-content>speichern (download)</v-list-item-content>
+                        </v-list-item>
+                        <v-list-item @click="onUpload">
+                            <v-list-item-icon><v-icon>fas fa-upload</v-icon></v-list-item-icon>
+                            <v-list-item-content>laden</v-list-item-content>
+                            <input type="file" ref="loadinput" style="display:none" @change="onUploadFileChoose" />
+                        </v-list-item>
+                        <v-list-item @click="onReset">
+                            <v-list-item-icon><v-icon>fas fa-trash</v-icon></v-list-item-icon>
+                            <v-list-item-content>alles leeren</v-list-item-content>
+                        </v-list-item>
+                    </v-list>
+                </v-menu>
+            </v-card-actions>
+            <v-card-text v-if="error">
+                <v-alert type="error">{{ error }}</v-alert>
+            </v-card-text>
         </v-card>
 
         <v-card v-if="result" class="mt-5">
@@ -104,22 +104,22 @@
                 <v-avatar><v-icon color="black">fas fa-dice</v-icon></v-avatar>
                 Würfel-Resultat
                 <v-spacer />
-                    <v-tooltip bottom>
-                        <template v-slot:activator="{ on }">
-                            <v-btn icon @click.stop="onStoreResult" v-on="on">
-                                <v-icon>fas fa-save</v-icon>
-                            </v-btn>
-                        </template>
-                        <span>Resultat aufbewahren</span>
-                    </v-tooltip>
-                    <v-tooltip bottom>
-                        <template v-slot:activator="{ on }">
-                            <v-btn icon @click.stop="result = null" v-on="on">
-                                <v-icon>fas fa-times</v-icon>
-                            </v-btn>
-                        </template>
-                        <span>Resultat löschen</span>
-                    </v-tooltip>
+                <v-tooltip bottom>
+                    <template v-slot:activator="{ on }">
+                        <v-btn icon @click.stop="onStoreResult" v-on="on">
+                            <v-icon>fas fa-save</v-icon>
+                        </v-btn>
+                    </template>
+                    <span>Resultat aufbewahren</span>
+                </v-tooltip>
+                <v-tooltip bottom>
+                    <template v-slot:activator="{ on }">
+                        <v-btn icon @click.stop="result = null" v-on="on">
+                            <v-icon>fas fa-times</v-icon>
+                        </v-btn>
+                    </template>
+                    <span>Resultat löschen</span>
+                </v-tooltip>
             </v-card-title>
             <v-card-text>
                 <v-simple-table>
@@ -224,8 +224,7 @@ export default {
             this.saveState();
         }
     },
-    computed: {
-    },
+    computed: {},
     mounted() {
         this.loadState(loadState());
     },
@@ -319,7 +318,7 @@ export default {
                 result: this.result,
                 storedResults: this.storedResults
             });
-            let file = new File([data], `wichtelomat-${new Date().getTime()}.json`, {type: 'application/json'});
+            let file = new File([data], `wichtelomat-${new Date().getTime()}.json`, { type: 'application/json' });
             let url = window.URL.createObjectURL(file);
             let linkElem = window.document.createElement('a');
             linkElem.href = url;
@@ -342,7 +341,7 @@ export default {
                     this.loadState(state);
                     this.saveState();
                 };
-                reader.readAsText(file)
+                reader.readAsText(file);
             }
         },
 

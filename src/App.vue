@@ -1,5 +1,5 @@
 <template>
-    <v-app>
+    <v-app class="as-app">
         <v-app-bar app color="indigo" dark>
             <h1 class="as-title">
                 <v-avatar color="pink accent-3"><v-icon>fas fa-hat-wizard</v-icon></v-avatar>
@@ -36,6 +36,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.as-app {
+    background-color: #eee !important;
+    background-image: url(~@/assets/stars.jpg) !important;
+}
+
 .as-title {
     margin-bottom: 0;
 }
