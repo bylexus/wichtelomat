@@ -1,0 +1,38 @@
+{
+    "name": "wichtelomat-backend",
+    "version": "1.0.0",
+    "private": true,
+    "description": "Wichtel-o-mat helps you with your Santa presents",
+    "author": {
+        "name": "Alexander Schenkel"
+    },
+    "scripts": {
+        "watch": "nodemon -w ./ server.js"
+    },
+    "dependencies": {
+        "express": "^4.17.1"
+    },
+    "devDependencies": {
+        "nodemon": "^2.0.6"
+    },
+    "bugs": {
+        "url": "https://github.com/bylexus/wichtelomat/issues"
+    },
+    "homepage": "https://github.com/bylexus/wichtelomat#readme",
+    "keywords": [
+        "wichtel",
+        "wichteln",
+        "wichtel-o-mat",
+        "wichtelomat"
+    ],
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/bylexus/wichtelomat.git"
+    },
+    "prettier": {
+        "printWidth": 120,
+        "tabWidth": 4,
+        "singleQuote": true
+    }
+}

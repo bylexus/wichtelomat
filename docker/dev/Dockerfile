@@ -1,15 +1,11 @@
-FROM httpd:2.4
+FROM node:12
 
-RUN apt-get update && apt-get dist-upgrade -y && apt-get install -y \
-    gcc \
-    g++ \
-    make \
-    ca-certificates \
-    curl
+VOLUME [ "/db-data" ]
+EXPOSE 3000
 
-COPY httpd.conf /usr/local/apache2/conf/httpd.conf
+RUN mkdir -p /db-data
+RUN npm install -g gulp-cli
 
-RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
-RUN apt-get install -y nodejs
+WORKDIR /app
 
-WORKDIR /src
+CMD sh -c "npm run watch-server" 

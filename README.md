@@ -1,24 +1,25 @@
 # wichtelomat
 
 ## Project setup
+
 ```
-npm install
+npm run setup-dev
 ```
 
-### Compiles and hot-reloads for development
+## Backend: Start dev server and watch for changes:
+
 ```
-npm run serve
+$ npm run watch-server
 ```
 
-### Compiles and minifies for production
+## Frontend: Compiles and watches for development
+
 ```
-npm run build
+$ npm run watch-frontend
 ```
 
-### Lints and fixes files
-```
-npm run lint
-```
+## Compiles and minifies for production
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+```
+$ npm run build-frontend
+```

@@ -7,9 +7,9 @@
             </h1>
         </v-app-bar>
 
-        <v-content>
+        <v-main>
             <Home />
-        </v-content>
+        </v-main>
 
         <v-footer app>
             <span class="mr-1">&copy; 2020&nbsp;</span>
@@ -26,12 +26,12 @@ export default {
     name: 'App',
 
     components: {
-        Home
+        Home,
     },
 
     data: () => ({
         //
-    })
+    }),
 };
 </script>
 
