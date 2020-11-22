@@ -3,6 +3,7 @@ exports.up = function (knex) {
     return knex.schema.createTable('users', function (table) {
         table.increments('id').primary();
         table.string('email', 1024).notNullable();
+        table.string('password', 256);
         table.timestamp('created_at').defaultTo(knex.fn.now());
         table.boolean('is_active').defaultTo(null);
         table.string('activation_hash', 256);

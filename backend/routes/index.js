@@ -21,7 +21,7 @@ module.exports = {
         // CSRF protected routes - Routes below check a CSRF token:
         router.use(csrfMiddleware);
         router.post('/register', register);
-        router.get('/activate/:activationHash', activate);
+        router.post('/activate', activate);
     },
 
     registerWebRoutes: function (router) {

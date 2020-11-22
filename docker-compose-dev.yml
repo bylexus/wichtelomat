@@ -5,8 +5,6 @@ services:
     build: docker/dev/backend
     ports:
       - "3000:3000"
-    expose: 
-      - "3000"
     networks:
       - wichtelomat
     volumes: 
@@ -23,6 +21,24 @@ services:
       - wichtelomat
     volumes: 
       - ./frontend:/src
+
+  mail:
+    image: mailhog/mailhog:latest
+    ports:
+        - "8025:8025"
+    networks:
+        - wichtelomat
+
+  sqlite:
+    image: coleifer/sqlite-web
+    ports:
+        - "9000:8080"
+    networks:
+        - wichtelomat
+    volumes:
+      - ./db-data:/data
+    environment: 
+        - "SQLITE_DATABASE=wichtelomat.sqlite"
 
 networks:
   wichtelomat:

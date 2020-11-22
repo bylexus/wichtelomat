@@ -39,8 +39,8 @@ app.all('*', (req, res) => {
 // Standard error handler:
 // if (process.env.NODE_ENV === 'production') {
     app.use((err, req, res, next) => {
-        let status = (err && err.code) || 500;
-        if (status < 100 || status >= 600) {
+        let status = Number(err && err.code) || 500;
+        if (status < 200 || status >= 600) {
             status = 500;
         }
         res.status(status);
@@ -56,4 +56,4 @@ db.getConnection()
             console.log(`Example app listening at http://localhost:${port}`);
         });
     })
-    .catch((err) => console.err(err));
+    .catch((err) => console.error(err));

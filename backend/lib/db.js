@@ -3,6 +3,7 @@ const config = require('../config.json');
 const path = require('path');
 const Error400 = require('./Error400');
 const dayjs = require('dayjs');
+const bcrypt = require('bcrypt');
 const duration = require('dayjs/plugin/duration');
 const { createRandomHash } = require('./tools');
 
@@ -66,12 +67,24 @@ async function createActivationForUser(email) {
     return await getUserByEmail(email);
 }
 
-async function activateUser(activationHash) {
+async function activateUser(activationHash, password) {
+    if ((password || '').length < 3) {
+        throw new Error400('Passwort zu kurz');
+    }
+
+    // User nach Aktivierungs-Hash suchen:
     const conn = getConnection();
     let user = await conn('users').select('*').where({ activation_hash: activationHash }).first();
     if (!user) {
         throw new Error400('ungültige Aktivierung');
     }
+
+    // wenn User schon aktiviert, gibts nix:
+    if (user.is_active) {
+        throw new Error400('ungültige Aktivierung');
+    }
+
+    // Prüfen, ob Aktivierung noch gültig ist:
     let activationStarted = dayjs(user.activation_started_at);
     let now = dayjs();
     let hoursAgo = dayjs.duration(now.diff(activationStarted)).asHours();
@@ -80,10 +93,12 @@ async function activateUser(activationHash) {
         // invalid activation - too long ago
         throw new Error400('ungültige Aktivierung');
     }
+    let hashedPW = await bcrypt.hash(password, 10);
     await conn('users').where({ id: user.id }).update({
         activation_hash: null,
         activation_started_at: dayjs().toISOString(),
         is_active: true,
+        password: hashedPW,
     });
     return await getUserByEmail(user.email);
 }

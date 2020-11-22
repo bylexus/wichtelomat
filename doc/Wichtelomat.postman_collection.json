@@ -1,0 +1,53 @@
+{
+	"info": {
+		"_postman_id": "91727c62-f3b7-4875-9be2-3616f52c8f00",
+		"name": "Wichtelomat Dev",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "session_info.json",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "2d3f78ab-bd4d-49ee-8e1c-978afe708f07",
+						"exec": [
+							"var jsonData = pm.response.json();",
+							"pm.environment.set(\"csrf_token\", jsonData.csrf_token);",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{backend}}/api/sessionInfo.json",
+					"host": [
+						"{{backend}}"
+					],
+					"path": [
+						"api",
+						"sessionInfo.json"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "register",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
