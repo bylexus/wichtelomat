@@ -1,12 +1,12 @@
 export function dice(wichtelArray) {
     let maxRounds = 1000;
     while (maxRounds > 0) {
-        let finalWichtels = wichtelArray.map(w => ({
+        let finalWichtels = wichtelArray.map((w) => ({
             index: w.index,
             name: w.name,
             gruppe: w.gruppe,
             isWichtelFor: null,
-            hasWichtel: null
+            hasWichtel: null,
         }));
         // for each wichtel, find another wichtel that
         // makes him a present (hasWichtel):
@@ -15,10 +15,7 @@ export function dice(wichtelArray) {
         let indices = shuffleArray([...finalWichtels.keys()]);
         for (let i = 0; i < indices.length; i++) {
             let actWichtel = finalWichtels[indices[i]];
-            let hisWichtel = findRandomFreeWichtelFor(
-                actWichtel,
-                finalWichtels
-            );
+            let hisWichtel = findRandomFreeWichtelFor(actWichtel, finalWichtels);
             if (!hisWichtel) {
                 allDone = false;
                 break;
@@ -32,7 +29,7 @@ export function dice(wichtelArray) {
         }
     }
 
-    throw new Error("No possible arrangement found in 1000 rounds.");
+    throw new Error('No possible arrangement found in 1000 rounds.');
 }
 
 /**
@@ -43,7 +40,7 @@ export function dice(wichtelArray) {
  */
 function findRandomFreeWichtelFor(wichtel, wichtels) {
     let possibleWichtels = wichtels.filter(
-        w =>
+        (w) =>
             // not himself
             w !== wichtel &&
             // is not a wichtel for anyone
@@ -52,10 +49,7 @@ function findRandomFreeWichtelFor(wichtel, wichtels) {
             (!w.gruppe || w.gruppe !== wichtel.gruppe)
     );
     if (possibleWichtels.length > 0) {
-        let randIndex = Math.min(
-            possibleWichtels.length - 1,
-            Math.floor(Math.random() * possibleWichtels.length)
-        );
+        let randIndex = Math.min(possibleWichtels.length - 1, Math.floor(Math.random() * possibleWichtels.length));
         return possibleWichtels[randIndex];
     } else {
         return null;
@@ -73,11 +67,11 @@ function shuffleArray(arr) {
 }
 
 export function saveState(state) {
-    localStorage.setItem("wichtelomat.state", JSON.stringify(state));
+    localStorage.setItem('wichtelomat.state', JSON.stringify(state));
 }
 
 export function loadState() {
-    return JSON.parse(localStorage.getItem("wichtelomat.state") || {});
+    return JSON.parse(localStorage.getItem('wichtelomat.state')) || {};
 }
 
 export function findWichtelByIndex(index, wichtels) {
@@ -89,3 +83,58 @@ export function findWichtelByIndex(index, wichtels) {
     }
     return null;
 }
+
+let csrfToken = null;
+export function setCsrfToken(token) {
+    csrfToken = token;
+}
+
+export async function errorFromResponse(response) {
+    // response can be a variety of things. Let's try.
+    // In any case, a Promise for an Error object is returned.
+    if (response.json) {
+        let json = await response.json();
+        if (json && json.error) {
+            return new Error(json.error);
+        }
+        return new Error(await response.text());
+    }
+    return Error('Unknown error');
+}
+
+/**
+ *
+ * @param {String} url The API call to execute, without the leading '/api'
+ * @param {Object} options additional options for the fetch() api
+ * @return {Promise}
+ */
+export async function apiCall(url, options) {
+    const opts = { ...options };
+    if (csrfToken) {
+        opts.headers = {
+            ...opts.headers,
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': csrfToken,
+        };
+    }
+    url = '/api' + url;
+    let res = await fetch(url, opts);
+    if (res.ok) {
+        return await res.json();
+    } else {
+        throw await errorFromResponse(res);
+    }
+}
+
+apiCall.get = function (url, options = {}) {
+    const opts = { ...options };
+    opts.method = 'GET';
+    return apiCall(url, opts);
+};
+
+apiCall.post = function (url, data = null, options = {}) {
+    const opts = { ...options };
+    opts.method = 'POST';
+    opts.body = JSON.stringify(data);
+    return apiCall(url, opts);
+};

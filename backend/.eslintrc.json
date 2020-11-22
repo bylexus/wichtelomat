@@ -12,7 +12,8 @@
         "prettier"
     ],
     "parserOptions": {
-        "parser": "babel-eslint"
+        "parser": "babel-eslint",
+        "ecmaVersion": 8
     },
     "rules": {
         "prettier/prettier": [

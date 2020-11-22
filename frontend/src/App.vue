@@ -5,10 +5,12 @@
                 <v-avatar color="pink accent-3"><v-icon>fas fa-hat-wizard</v-icon></v-avatar>
                 Wichtelomat <span class="as-subtitle">Würfle Deinen Wichtel!</span>
             </h1>
+            <v-spacer />
+            <v-btn v-if="$route.meta.hideSignUp !== true" @click="showSignInDlg">registrieren</v-btn>
         </v-app-bar>
 
         <v-main>
-            <Home />
+            <router-view></router-view>
         </v-main>
 
         <v-footer app>
@@ -17,21 +19,41 @@
             <v-spacer />
             <span>V 1.0.0</span>
         </v-footer>
+
+        <SignUpDlg v-model="signUpDlgVisible" @registered="registeredOkDlg = true" />
+        <v-dialog v-model="registeredOkDlg" persistent>
+            <v-card>
+                <v-card-title>Registrierung erfolgt!</v-card-title>
+                <v-card-text>
+                    Du bekommst in den nächsten Minuten ein Email mit einem Registrierungs-Link.
+                </v-card-text>
+                <v-card-actions>
+                    <v-btn color="primary" @click="registeredOkDlg = false">ok!</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
     </v-app>
 </template>
 
+
 <script>
-import Home from '@/views/Home.vue';
+import SignUpDlg from '@/views/SignUpDlg.vue';
+
 export default {
     name: 'App',
-
     components: {
-        Home,
+        SignUpDlg,
     },
 
     data: () => ({
-        //
+        signUpDlgVisible: false,
+        registeredOkDlg: false,
     }),
+    methods: {
+        showSignInDlg() {
+            this.signUpDlgVisible = true;
+        },
+    },
 };
 </script>
 

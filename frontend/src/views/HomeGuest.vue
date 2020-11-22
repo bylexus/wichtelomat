@@ -1,16 +1,15 @@
 <template>
-    <HomeAuth />
+    <v-container>
+        <v-card>
+            <v-card-text> Guest - login </v-card-text>
+        </v-card>
+    </v-container>
 </template>
 
 <script>
-import HomeAuth from '@/views/HomeAuth.vue';
-import HomeGuest from '@/views/HomeGuest.vue';
 export default {
     name: 'HomeGuest',
-    components: {
-        HomeAuth,
-        HomeGuest,
-    },
+    components: {},
     data: function () {
         return {};
     },

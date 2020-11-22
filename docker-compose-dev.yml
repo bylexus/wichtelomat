@@ -1,9 +1,8 @@
 version: "3.8"
 services:
 
-  web:
-    build: docker/dev/
-    container_name: wichtelomat
+  backend:
+    build: docker/dev/backend
     ports:
       - "3000:3000"
     expose: 
@@ -11,11 +10,19 @@ services:
     networks:
       - wichtelomat
     volumes: 
-      - ./:/app
-      - wichtelomat-data:/db-data
+      - ./backend:/app
+      - ./db-data:/db-data
+
+  frontend:
+    build: docker/dev/frontend
+    ports:
+      - "3001:3000"
+    expose: 
+      - "3000"
+    networks:
+      - wichtelomat
+    volumes: 
+      - ./frontend:/src
 
 networks:
   wichtelomat:
-
-volumes:
-  wichtelomat-data:

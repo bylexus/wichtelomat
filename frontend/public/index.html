@@ -7,6 +7,11 @@
     <meta name="author" content="Alexander Schenkel <alex-der-wichtel@alexi.ch>">
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
     <title>Wichtelomat by alexi.ch</title>
+    <script>
+        window.GLOBALS = {
+            API: "<%= VUE_APP_API_ENTRYPOINT %>"
+        }
+    </script>
   </head>
   <body>
     <noscript>
