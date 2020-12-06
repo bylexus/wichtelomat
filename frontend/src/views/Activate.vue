@@ -95,6 +95,7 @@ export default {
         },
         redirectToLogin() {
             this.activationOkDlg = false;
+            this.$router.push('/');
         },
     },
 };

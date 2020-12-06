@@ -4,6 +4,7 @@ node_modules
 /db-data
 .init
 /backend/config.json
+/backend/sessions/
 
 # local env files
 .env.local

@@ -6,11 +6,15 @@
                 Wichtelomat <span class="as-subtitle">Würfle Deinen Wichtel!</span>
             </h1>
             <v-spacer />
-            <v-btn v-if="$route.meta.hideSignUp !== true" @click="showSignInDlg">registrieren</v-btn>
+            <v-btn v-if="user" icon color="primary" title="Ausloggen" @click="logout">
+                <v-icon color="white">fas fa-sign-out-alt</v-icon>
+            </v-btn>
         </v-app-bar>
 
         <v-main>
-            <router-view></router-view>
+            <v-slide-x-transition mode="out-in">
+                <router-view></router-view>
+            </v-slide-x-transition>
         </v-main>
 
         <v-footer app>
@@ -19,39 +23,34 @@
             <v-spacer />
             <span>V 1.0.0</span>
         </v-footer>
-
-        <SignUpDlg v-model="signUpDlgVisible" @registered="registeredOkDlg = true" />
-        <v-dialog v-model="registeredOkDlg" persistent>
-            <v-card>
-                <v-card-title>Registrierung erfolgt!</v-card-title>
-                <v-card-text>
-                    Du bekommst in den nächsten Minuten ein Email mit einem Registrierungs-Link.
-                </v-card-text>
-                <v-card-actions>
-                    <v-btn color="primary" @click="registeredOkDlg = false">ok!</v-btn>
-                </v-card-actions>
-            </v-card>
-        </v-dialog>
     </v-app>
 </template>
 
 
 <script>
-import SignUpDlg from '@/views/SignUpDlg.vue';
+import { apiCall } from '@/lib';
 
 export default {
     name: 'App',
-    components: {
-        SignUpDlg,
+    data: () => ({}),
+    computed: {
+        user() {
+            return this.$store.state.user;
+        },
     },
-
-    data: () => ({
-        signUpDlgVisible: false,
-        registeredOkDlg: false,
-    }),
     methods: {
-        showSignInDlg() {
-            this.signUpDlgVisible = true;
+        async logout() {
+            this.error = null;
+            this.loading = true;
+            try {
+                await apiCall.get('/logout');
+                this.$store.commit('setUser', null);
+                document.location.href = '/';
+            } catch (e) {
+                this.error = e.message ? e.message : String(e);
+            } finally {
+                this.loading = false;
+            }
         },
     },
 };

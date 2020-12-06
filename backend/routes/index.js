@@ -1,7 +1,11 @@
 const register = require('./register.js');
 const activate = require('./activate.js');
 const sessionInfo = require('./sessionInfo.js');
+const login = require('./login.js');
+const logout = require('./logout.js');
 const csurf = require('csurf');
+const authMiddleware = require('../middlewares/auth-middleware');
+const anlassHandler = require('./anlass');
 
 const csrfMiddleware = csurf({
     cookie: false,
@@ -22,6 +26,12 @@ module.exports = {
         router.use(csrfMiddleware);
         router.post('/register', register);
         router.post('/activate', activate);
+        router.post('/login', login);
+        router.get('/logout', logout);
+
+        // Anlass-Routen
+        router.post('/anlass', authMiddleware, anlassHandler.createAnlass);
+        router.get('/anlass', authMiddleware, anlassHandler.listAll);
     },
 
     registerWebRoutes: function (router) {

@@ -103,11 +103,48 @@ async function activateUser(activationHash, password) {
     return await getUserByEmail(user.email);
 }
 
+// ----------------------------- Anlass-Methoden ---------------------
+async function getEventById(id) {
+    return await getConnection()
+        .select('*')
+        .from('events')
+        .where({
+            id,
+        })
+        .first();
+}
+
+async function getEventsForUser(id) {
+    return await getConnection()
+        .select('*')
+        .from('events')
+        .where({
+            user_id: id,
+        })
+        .orderBy('event_date', 'desc');
+}
+
+async function newEvent(userId) {
+    let res = await getConnection()('events').insert({
+        user_id: userId,
+        title: 'Neuer Anlass',
+    });
+    if (res && res.length) {
+        let id = res[0];
+        let event = await getEventById(id);
+        return event;
+    }
+}
+
 module.exports = {
     getConnection,
     users: {
         byEmail: getUserByEmail,
         register: registerUser,
         activate: activateUser,
+    },
+    events: {
+        new: newEvent,
+        getForUser: getEventsForUser,
     },
 };

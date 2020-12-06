@@ -1,309 +1,123 @@
 <template>
     <v-container>
+        <v-alert v-if="error" type="error">{{ error }}</v-alert>
         <v-card>
             <v-card-title>
-                <v-avatar> <v-icon color="black">fas fa-gifts</v-icon> </v-avatar>Anlass
-            </v-card-title>
-            <v-card-text>
-                <v-text-field v-model.lazy="anlass" placeholder="z.B. Weihnachten mit Familie" autofocus />
-            </v-card-text>
-            <v-divider />
-            <v-card-title>
                 <v-avatar>
-                    <v-icon color="black">fas fa-hat-wizard</v-icon>
+                    <v-icon color="black">fas fa-gifts</v-icon>
                 </v-avatar>
-                Wichtel
-            </v-card-title>
-
-            <v-card-text>
-                <v-container fluid>
-                    <template v-for="(w, index) in wichtel">
-                        <v-row :key="`row-${w.index}`" align="center">
-                            <v-col cols="12" sm="6">
-                                <v-text-field
-                                    v-model.lazy="w.name"
-                                    :autofocus="index > 0"
-                                    label="Name"
-                                    placeholder="z.B. Mami"
-                                    @keydown.enter="onAdd"
-                                    @change="onChange"
-                                />
-                            </v-col>
-                            <v-col cols="12" sm="4">
-                                <v-text-field
-                                    v-model.lazy="w.gruppe"
-                                    label="Gruppe"
-                                    placeholder="z.B. Eltern"
-                                    @keydown.enter="onAdd"
-                                />
-                            </v-col>
-                            <v-col cols="12" sm="2">
-                                <v-btn
-                                    v-if="index + 1 === wichtel.length"
-                                    class="mr-2"
-                                    small
-                                    fab
-                                    color="primary"
-                                    @click.stop="onAdd"
-                                >
-                                    <v-icon small>fas fa-plus /></v-icon>
-                                </v-btn>
-                                <v-btn
-                                    v-if="wichtel.length > 1"
-                                    small
-                                    fab
-                                    color="error"
-                                    @click.stop="onRemove(w.index)"
-                                >
-                                    <v-icon small>fas fa-minus /></v-icon>
-                                </v-btn>
-                            </v-col>
-                        </v-row>
-                        <v-divider v-if="index + 1 < wichtel.length" :key="`div-${w.index}`" />
-                    </template>
-                </v-container>
-            </v-card-text>
-            <v-card-actions>
-                <v-btn color="primary" :loading="loading" @click.stop="dice">
-                    <v-icon left>fas fa-dice</v-icon>
-                    Wichtel würfeln!
-                </v-btn>
-                <v-btn color="red lighten-2 white--text" :loading="loading" @click.stop="clear">
-                    <v-icon left>fas fa-trash</v-icon>
-                    Wichtel löschen
-                </v-btn>
+                <v-badge bordered overlap offset-x="0" offset-y="10" color="primary" :content="anlaesse.length">
+                    Deine Anlässe
+                </v-badge>
                 <v-spacer />
-                <v-tooltip bottom>
-                    <template #activator="{ on }">
-                        <v-btn :href="jsonData" download="wichtel.json" v-on="on">
-                            <v-icon>fas fa-download</v-icon>
-                        </v-btn>
-                    </template>
-                    <span>Einstellungen herunterladen</span>
-                </v-tooltip>
-            </v-card-actions>
-            <v-card-text v-if="error">
-                <v-alert type="error">{{ error }}</v-alert>
-            </v-card-text>
-        </v-card>
-
-        <v-card v-if="result" class="mt-5">
-            <v-card-title ref="result">
-                <v-avatar><v-icon color="black">fas fa-dice</v-icon></v-avatar>
-                Würfel-Resultat
-                <v-spacer />
-                <v-tooltip bottom>
-                    <template #activator="{ on }">
-                        <v-btn icon @click.stop="onStoreResult" v-on="on">
-                            <v-icon>fas fa-save</v-icon>
-                        </v-btn>
-                    </template>
-                    <span>Resultat aufbewahren</span>
-                </v-tooltip>
-                <v-tooltip bottom>
-                    <template #activator="{ on }">
-                        <v-btn icon @click.stop="result = null" v-on="on">
-                            <v-icon>fas fa-times</v-icon>
-                        </v-btn>
-                    </template>
-                    <span>Resultat löschen</span>
-                </v-tooltip>
+                <v-btn color="primary" fab small @click="onNewAnlassClick">
+                    <v-icon color="white">fas fa-plus</v-icon>
+                </v-btn>
             </v-card-title>
+            <v-card-subtitle>Hier findest Du alle Deine Wichtel-Anlässe.</v-card-subtitle>
             <v-card-text>
-                <v-simple-table>
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>wichtelt für ...</th>
-                            <th>... und hat Wichtel</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="wichtel in result" :key="wichtel.index">
-                            <td>
-                                <strong>{{ wichtel.name }}</strong>
-                            </td>
-                            <td>
-                                {{ findWichtelByIndex(wichtel.isWichtelFor, result).name }}
-                            </td>
-                            <td>
-                                {{ findWichtelByIndex(wichtel.hasWichtel, result).name }}
-                            </td>
-                        </tr>
-                    </tbody>
-                </v-simple-table>
-            </v-card-text>
-        </v-card>
-
-        <v-card v-if="storedResults.length > 0" class="mt-5">
-            <v-card-title>
-                <v-avatar> <v-icon color="black">fas fa-save</v-icon> </v-avatar> Gespeicherte Resultate
-            </v-card-title>
-            <v-card-text>
-                <v-expansion-panels>
-                    <v-expansion-panel v-for="(result, index) in storedResults" :key="result.time">
-                        <v-expansion-panel-header>
-                            <span>
-                                <strong>{{ result.title }}</strong>
-                                <span> | {{ result.time }}</span>
-                            </span>
-                        </v-expansion-panel-header>
-                        <v-expansion-panel-content>
-                            <v-simple-table>
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>wichtelt für ...</th>
-                                        <th>... und hat Wichtel</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr v-for="wichtel in result.result" :key="wichtel.index">
-                                        <td>
-                                            <strong>{{ wichtel.name }}</strong>
-                                        </td>
-                                        <td>
-                                            {{ findWichtelByIndex(wichtel.isWichtelFor, result.result).name }}
-                                        </td>
-                                        <td>
-                                            {{ findWichtelByIndex(wichtel.hasWichtel, result.result).name }}
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </v-simple-table>
-                            <v-btn icon color="red" @click="removeStoredResult(index)">
-                                <v-icon>fas fa-trash</v-icon>
+                <v-row>
+                    <v-col v-for="anlass in anlaesse" :key="anlass.id" cols="12" sm="6" md="4">
+                        <v-card
+                            color="yellow lighten-5"
+                            :to="{ name: 'anlass', params: { id: anlass.id } }"
+                            hover
+                            style="position: relative"
+                        >
+                            <v-btn icon x-small absolute top right @click.prevent="removeAnlass(anlass.id)">
+                                <v-icon x-small>fas fa-times</v-icon>
                             </v-btn>
-                        </v-expansion-panel-content>
-                    </v-expansion-panel>
-                </v-expansion-panels>
+                            <v-card-title>
+                                <v-icon color="yellow darken-1" small>fas fa-star</v-icon>
+                                <span class="ml-2">{{ anlass.title }}</span>
+                            </v-card-title>
+                            <v-card-subtitle v-if="anlass.subtitle">{{ anlass.subtitle }}</v-card-subtitle>
+                            <v-card-text>
+                                <ul>
+                                    <li>Anlass am: {{ anlass.event_date }}</li>
+                                </ul>
+                            </v-card-text>
+                        </v-card>
+                    </v-col>
+                </v-row>
             </v-card-text>
         </v-card>
+        <v-dialog v-model="showDelConfirmDlg" persistent>
+            <v-card>
+                <v-card-title>Anlass löschen</v-card-title>
+                <v-card-text> Willst Du diesen Anlass wirklich löschen? Alle Daten darin gehen verloren. </v-card-text>
+                <v-card-actions>
+                    <v-spacer />
+                    <v-btn text @click="showDelConfirmDlg = false">Nein!</v-btn>
+                    <v-btn color="primary" @click="delSelectedEvent">Ja!</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
     </v-container>
 </template>
 
 <script>
-import { dice, loadState, saveState, findWichtelByIndex } from '@/lib.js';
+import { mapActions } from 'vuex';
 
 export default {
-    name: 'Home',
+    name: 'HomeAuth',
     components: {},
+    beforeRouteUpdate(to, from, next) {
+        this.initiateAnlassLoad();
+    },
     data: function () {
         return {
             loading: false,
             error: null,
-            anlass: '',
-            wichtel: [this.createNewEntry()],
-            result: null,
-            storedResults: [],
+            showDelConfirmDlg: false,
+            eventToDelete: null,
         };
     },
     computed: {
-        jsonData: function () {
-            return (
-                'data:text/json;charset=utf-8,' +
-                encodeURIComponent(
-                    JSON.stringify({
-                        anlass: this.anlass,
-                        wichtel: this.wichtel,
-                        result: this.result,
-                        storedResults: this.storedResults,
-                    })
-                )
-            );
-        },
-    },
-    watch: {
-        anlass: function () {
-            this.saveState();
-        },
-        wichtel: function () {
-            this.saveState();
-        },
-        result: function () {
-            this.saveState();
-        },
-        storedResults: function () {
-            this.saveState();
+        anlaesse() {
+            return this.$store.state.anlaesse;
         },
     },
     mounted() {
-        this.loadState();
+        this.initiateAnlassLoad();
     },
     methods: {
-        createNewEntry() {
-            let index = ((this.wichtel || []).reduce((max, curr) => (curr.index > max ? curr.index : max), 0) || 0) + 1;
-            return {
-                index,
-                name: null,
-                gruppe: null,
-            };
-        },
-        onAdd() {
-            this.wichtel.push(this.createNewEntry());
-        },
-        onRemove(index) {
-            this.wichtel = this.wichtel.filter((w) => w.index !== index);
-        },
-
-        onChange() {
-            this.saveState();
-        },
-
-        saveState() {
-            saveState({
-                anlass: this.anlass,
-                wichtel: this.wichtel,
-                result: this.result,
-                storedResults: this.storedResults,
-            });
-        },
-
-        loadState() {
-            let state = loadState();
-            this.anlass = state.anlass || null;
-            this.wichtel = state.wichtel || [this.createNewEntry()];
-            this.result = state.result || null;
-            this.storedResults = state.storedResults || [];
-        },
-
-        clear() {
-            if (confirm('Sicher?')) {
-                this.error = null;
-                this.wichtel = [];
-                this.wichtel = [this.createNewEntry()];
-            }
-        },
-
-        dice() {
+        ...mapActions(['newAnlass', 'loadAnlaesse', 'deleteAnlass']),
+        async initiateAnlassLoad() {
             this.loading = true;
-            this.error = null;
             try {
-                let result = dice(
-                    // filter out empty entries:
-                    this.wichtel.filter((w) => (w.name || '').length > 0 || (w.gruppe || '').length > 0)
-                );
-                this.result = result;
-                this.$vuetify.goTo(this.$refs.result);
+                await this.loadAnlaesse();
             } catch (e) {
-                this.error = 'Oh nein! Es konnte keine vollständige Zuteilung gefunden werden!';
+                this.error = e.message ? e.message : String(e);
+            } finally {
+                this.loading = false;
             }
             this.loading = false;
         },
 
-        findWichtelByIndex: (i, wichtels) => findWichtelByIndex(i, wichtels),
-
-        onStoreResult: function () {
-            let storeEntry = {
-                title: this.anlass || '(kein Anlass)',
-                time: new Date().toLocaleString(),
-                result: this.result,
-            };
-            this.storedResults = [storeEntry].concat(this.storedResults || []);
+        async onNewAnlassClick() {
+            this.error = null;
+            this.loading = true;
+            try {
+                let anlass = await this.newAnlass();
+                this.$router.push({ name: 'anlass', params: { id: anlass.id } });
+            } catch (e) {
+                this.error = e.message ? e.message : String(e);
+            } finally {
+                this.loading = false;
+            }
         },
 
-        removeStoredResult(index) {
-            this.storedResults = this.storedResults.slice(0, index).concat(this.storedResults.slice(index + 1));
+        removeAnlass(id) {
+            this.eventToDelete = id;
+            this.showDelConfirmDlg = true;
+        },
+
+        delSelectedEvent() {
+            let id = this.eventToDelete;
+            this.showDelConfirmDlg = false;
+            this.eventToDelete = null;
+            this.deleteAnlass(id);
         },
     },
 };
