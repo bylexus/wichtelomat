@@ -12,7 +12,7 @@
         </v-main>
 
         <v-footer app>
-            <span class="mr-1">&copy; 2020&nbsp;</span>
+            <span class="mr-1">&copy; 2020-2025&nbsp;</span>
             <a href="mailto:alex-der-wichtel@alexi.ch">alex schenkel</a>
             <v-spacer />
             <span>V 2.1.0</span>
